@@ -108,14 +108,29 @@
 
   // Pick the word
   Hangman.App = function () {
-    var word = this.pickSecretWord();
+    this.word = this.pickSecretWord();
     //word = 'eat'; // todo: remove later
-    this.secretWordController = new Hangman.SecretWordController(word);
+    this.secretWordController = new Hangman.SecretWordController(this.word);
     this.remainingGuesses = 10;
     this.guessList = [];
-    this.player = new Hangman.RobotPlayer(word.length);
+    this.player = this.pickPlayer();
     this.playGame();
   };
+
+  Hangman.App.prototype.pickPlayer = function(){
+    var pickPlayer = prompt("Enter 'u' if you want to play and 'c' if you want to watch the computer play.")
+    var player
+
+    if (pickPlayer === 'c'){
+       player = new Hangman.RobotPlayer(this.word.length);
+    } else if (pickPlayer === 'u') {
+       player = new Hangman.HumanPlayer(this.word.length);      
+    } else {
+      alert("That is not a valid entry");
+      this.pickPlayer();
+    }
+    return player
+  }
 
   Hangman.App.prototype.pickSecretWord = function() {
     return words[Math.floor(Math.random() * words.length)];
