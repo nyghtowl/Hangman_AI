@@ -106,9 +106,6 @@
   };
 
 
-
-
-
   // Pick the word
   Hangman.App = function () {
     var word = this.pickSecretWord();
