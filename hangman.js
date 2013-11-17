@@ -77,18 +77,20 @@
     delete this.counts[guess];
 
     if (matched) {
-      this.trimDownCorpus(revealed);
+      this.trimDownCorpus(revealed, guess);
       this.recomputeCounts();
     }
 
   };
 
-  Hangman.RobotPlayer.prototype.trimDownCorpus = function (revealed) {
+  Hangman.RobotPlayer.prototype.trimDownCorpus = function (revealed, guess) {
     var template = '^'+revealed.replace(/_/g, '.')+'$';
     var pattern = new RegExp(template, 'g');
     this.corpus = _.filter(this.corpus, function (word) {
       return word.match(pattern);
     });
+    // for each space that is not the correct guess, find matching words and pull from corpus
+
   };
 
   Hangman.RobotPlayer.prototype.recomputeCounts = function (guess, matched, revealed) {
