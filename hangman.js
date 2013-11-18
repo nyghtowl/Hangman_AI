@@ -86,11 +86,26 @@
   Hangman.RobotPlayer.prototype.trimDownCorpus = function (revealed, guess) {
     var template = '^'+revealed.replace(/_/g, '.')+'$';
     var pattern = new RegExp(template, 'g');
+    var what_to_pull = '';
     this.corpus = _.filter(this.corpus, function (word) {
       return word.match(pattern);
     });
+    console.log(this.corpus);
     // for each space that is not the correct guess, find matching words and pull from corpus
-
+    for(var i; i < revealed.length; i++){
+      if(revealed[i] !== guess){
+        var letter_pattern = '';
+        letter_pattern = pattern.split('');
+        letter_pattern[i] = guess;
+        letter_pattern = letter_pattern.join('');
+        var reg_pattern = new RegExp(letter_pattern, 'g');
+        this.corpus = _.without(this.corpus, function (word) {
+          console.log(reg_pattern);
+          return word.match(reg_pattern)
+        });
+      }
+    }
+    console.log(this.corpus);
   };
 
   Hangman.RobotPlayer.prototype.recomputeCounts = function (guess, matched, revealed) {
@@ -113,7 +128,7 @@
     this.word = this.pickSecretWord();
     //word = 'eat'; // todo: remove later
     this.secretWordController = new Hangman.SecretWordController(this.word);
-    this.remainingGuesses = 10;
+    this.remainingGuesses = 4;
     this.guessList = [];
     this.player = this.pickPlayer();
     this.playGame();
