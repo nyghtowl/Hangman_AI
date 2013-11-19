@@ -100,7 +100,6 @@
         letter_pattern = letter_pattern.join('');
         var reg_pattern = new RegExp(letter_pattern, 'g');
         this.corpus = _.without(this.corpus, function (word) {
-          console.log(reg_pattern);
           return word.match(reg_pattern)
         });
       }
