@@ -36,7 +36,7 @@
 
 */
 
-// weakness: peacock
+// weakness: peacock, juries
 
 (function () {
   
@@ -59,26 +59,28 @@
   Hangman.RobotPlayer.prototype.doTurn = function (revealed) {
     var alphabet = this.possibleGuesses;
     var guess = alphabet[Math.floor(Math.random() * alphabet.length)];
+    var counts = this.counts;
+    var max = _.max(this.counts);
 
-    var max = 0, maxLetter = alphabet[0];
-    _.each(this.counts, function (count, letter) {
-      if (count > max) {
-        max = count;
-        maxLetter = letter;
-      }
-    });
+    var bestGuesses = _.filter(this.possibleGuesses, function(possibleGuesses) {
+        return counts[possibleGuesses] === max;
+      });
 
-    return maxLetter;
+    var bestGuess = _.shuffle(bestGuesses)[0]; // not deterministic
+    if (this.possibleGuesses.indexOf(bestGuess) < 0) throw 'Guess errored out.';
+    return bestGuess;
   };
 
   Hangman.RobotPlayer.prototype.afterTurn = function (guess, matched, revealed) {
 
     this.possibleGuesses = _.without(this.possibleGuesses, guess);
-    delete this.counts[guess];
 
     if (matched) {
       this.trimDownCorpus(revealed, guess);
-      this.recomputeCounts();
+      this.recomputeCounts(); // runs the numbers on most frequent letters left in corpus
+    } else {
+      this.trimDownCorpusDenied(guess);
+      this.recomputeCounts(); 
     }
   };
 
@@ -114,7 +116,8 @@
 
   // Pick the word
   Hangman.App = function () {
-    this.word = this.pickSecretWord();
+    // this.word = this.pickSecretWord();
+    this.word = 'buries';
     //word = 'eat'; // todo: remove later
     this.secretWordController = new Hangman.SecretWordController(this.word);
     this.remainingGuesses = 4;
