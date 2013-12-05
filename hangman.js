@@ -36,7 +36,7 @@
 
 */
 
-// weakness: peacock, juries
+// weakness: peacock, juries, rub
 
 (function () {
   
@@ -115,18 +115,19 @@
 
 
   // Pick the word
-  Hangman.App = function () {
-    // this.word = this.pickSecretWord();
-    this.word = 'buries';
+  Hangman.App = function (options) {
+    this.word = this.pickSecretWord();
     //word = 'eat'; // todo: remove later
     this.secretWordController = new Hangman.SecretWordController(this.word);
     this.remainingGuesses = 4;
     this.guessList = [];
     this.player = this.pickPlayer();
-    this.playGame();
+    this.options = options;
+    // this.playGame();
   };
 
   Hangman.App.prototype.pickPlayer = function(){
+    return new Hangman.RobotPlayer(this.word.length);
     var pickPlayer = prompt("Enter 'u' if you want to play and 'c' if you want to watch the computer play.");
     var player;
 
@@ -158,20 +159,21 @@
   Hangman.App.prototype.checkDone = function() {
     
     if (this.secretWordController.isFullyRevealed()) {
-      console.log('Congratulations, you won!');
+      if (!this.options.silent) { console.log('Congratulations, you won!'); }
     } else {
-      console.log('Sorry, you ran out of guesses. The word was: ', this.secretWordController.secretWord);      
+      if (!this.options.silent) { console.log('Sorry, you ran out of guesses. The word was: ', this.secretWordController.secretWord); }
     }
   };
 
   Hangman.App.prototype.playGame = function() {
-    console.log('Welcome to the game, Hangman! I am thinking of a word that is ' + this.secretWordController.secretWord.length + ' letters long.');
+    if (!this.options.silent) { console.log('Welcome to the game, Hangman! I am thinking of a word that is ' + this.secretWordController.secretWord.length + ' letters long.'); }
 
     while (this.remainingGuesses > 0 && !this.secretWordController.isFullyRevealed()){
       this.doOneTurn();
     }
     this.checkDone();
 
+    return this.secretWordController.isFullyRevealed()
   };
 
   Hangman.App.prototype.doOneTurn = function () {
@@ -197,7 +199,7 @@
       this.remainingGuesses -= 1;
     }
 
-    console.log(message, color, revealed, remaining);
+    if (!this.options.silent) { console.log(message, color, revealed, remaining); }
     this.player.afterTurn(guess, matched, revealed);
 
   };

@@ -8,7 +8,7 @@
 <script>
 	
 	(function () {
-
+		var app, result, wins = 0, rounds = 0;
 		// test code
 		// var wordController = new Hangman.SecretWordController("cheese");
 		// console.log(wordController);
@@ -18,8 +18,22 @@
 		// console.log(wordController.processGuess('c'));
 		// console.log(wordController.getRevealed());
 		// console.log(wordController.isDone());
+		for (var i = 0; i < 500; i++) {
+			console.group('round', i);
+			
+			app = new Hangman.App({ 
+				silent: true // if true don't output
+			}); 
+			didWin = app.playGame();
+			
+			rounds++;
+			if (didWin) { wins++; }
 
-		var app = new Hangman.App();
+			console.groupEnd();
+
+		}
+
+		console.log(wins/rounds * 100);
 
 	})();
 
