@@ -90,6 +90,17 @@
     this.corpus = _.filter(this.corpus, function (word) {
       return word.match(pattern);
     });
+
+
+  Hangman.RobotPlayer.prototype.trimDownCorpusDenied = function (guess) {
+    this.corpus = _.filter(this.corpus, function(word) {
+      if (word.indexOf(guess) !== -1) { 
+        return true 
+      } else {
+        return false 
+      }
+    })
+  }
     console.log(this.corpus);
     // for each space that is not the correct guess, find matching words and pull from corpus
     for(var i; i < revealed.length; i++){
@@ -134,8 +145,8 @@
   };
 
   Hangman.App.prototype.pickPlayer = function(){
-    var pickPlayer = prompt("Enter 'u' if you want to play and 'c' if you want to watch the computer play.")
-    var player
+    var pickPlayer = prompt("Enter 'u' if you want to play and 'c' if you want to watch the computer play.");
+    var player;
 
     if (pickPlayer === 'c'){
        player = new Hangman.RobotPlayer(this.word.length);
@@ -143,9 +154,9 @@
        player = new Hangman.HumanPlayer(this.word.length);      
     } else {
       alert("That is not a valid entry");
-      this.pickPlayer();
+      player = this.pickPlayer();
     }
-    return player
+    return player;
   }
 
   Hangman.App.prototype.pickSecretWord = function() {
