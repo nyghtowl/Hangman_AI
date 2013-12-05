@@ -80,7 +80,6 @@
       this.trimDownCorpus(revealed, guess);
       this.recomputeCounts();
     }
-
   };
 
   Hangman.RobotPlayer.prototype.trimDownCorpus = function (revealed, guess) {
@@ -90,33 +89,13 @@
     this.corpus = _.filter(this.corpus, function (word) {
       return word.match(pattern);
     });
-
+  }
 
   Hangman.RobotPlayer.prototype.trimDownCorpusDenied = function (guess) {
     this.corpus = _.filter(this.corpus, function(word) {
-      if (word.indexOf(guess) !== -1) { 
-        return true 
-      } else {
-        return false 
-      }
-    })
+      return word.indexOf(guess) < 0;
+    });
   }
-    console.log(this.corpus);
-    // for each space that is not the correct guess, find matching words and pull from corpus
-    for(var i; i < revealed.length; i++){
-      if(revealed[i] !== guess){
-        var letter_pattern = '';
-        letter_pattern = pattern.split('');
-        letter_pattern[i] = guess;
-        letter_pattern = letter_pattern.join('');
-        var reg_pattern = new RegExp(letter_pattern, 'g');
-        this.corpus = _.without(this.corpus, function (word) {
-          return word.match(reg_pattern)
-        });
-      }
-    }
-    console.log(this.corpus);
-  };
 
   Hangman.RobotPlayer.prototype.recomputeCounts = function (guess, matched, revealed) {
     var counts = {};
