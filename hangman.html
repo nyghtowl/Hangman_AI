@@ -5,27 +5,29 @@
 <script type="text/javascript" src="words.js"></script>
 <script type="text/javascript" src="underscore.js"></script>
 <script type="text/javascript" src="hangman.js"></script>
-<script>
+<script type="text/javascript" src="chart.js"></script>
+
+
 	
+
+<body>
+	<canvas id="myChart" width="400" height="400"></canvas>
+<script>
 	(function () {
 		var app, result, wins = 0, rounds = 0;
-		// test code
-		// var wordController = new Hangman.SecretWordController("cheese");
-		// console.log(wordController);
-		// console.log(wordController.getRevealed());
-		// console.log(wordController.processGuess('e'));
-		// console.log(wordController.getRevealed());
-		// console.log(wordController.processGuess('c'));
-		// console.log(wordController.getRevealed());
-		// console.log(wordController.isDone());
-		for (var i = 0; i < 500; i++) {
+		var ctx = document.getElementById("myChart").getContext("2d");
+
+		var app = new Hangman.App({ 
+			silent: false // if true don't output
+		}); 
+
+		for (var i = 0; i < 5; i++) {
 			console.group('round', i);
 			
-			app = new Hangman.App({ 
-				silent: true // if true don't output
-			}); 
 			didWin = app.playGame();
 			
+			app.reset();	
+
 			rounds++;
 			if (didWin) { wins++; }
 
@@ -35,9 +37,28 @@
 
 		console.log(wins/rounds * 100);
 
+		var data = {
+			labels : ["January","February","March","April","May","June","July"],
+			datasets : [
+				{
+					fillColor : "rgba(220,220,220,0.5)",
+					strokeColor : "rgba(220,220,220,1)",
+					pointColor : "rgba(220,220,220,1)",
+					pointStrokeColor : "#fff",
+					data : [65,59,90,81,56,55,40]
+				},
+				{
+					fillColor : "rgba(151,187,205,0.5)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					data : [28,48,40,19,96,27,100]
+				}
+			]
+		}
+		new Chart(ctx).Line(data, {});
+
 	})();
-
-
-</script>
-<body></body>
+	</script>
+</body>
 </html>

@@ -114,17 +114,22 @@
   };
 
 
+  Hangman.App = function(options){
+    this.options = options;
+    this.reset();
+  }
+
   // Pick the word
-  Hangman.App = function (options) {
+  Hangman.App.prototype.reset = function (options) {
     this.word = this.pickSecretWord();
     //word = 'eat'; // todo: remove later
     this.secretWordController = new Hangman.SecretWordController(this.word);
     this.remainingGuesses = 4;
     this.guessList = [];
     this.player = this.pickPlayer();
-    this.options = options;
     // this.playGame();
   };
+
 
   Hangman.App.prototype.pickPlayer = function(){
     return new Hangman.RobotPlayer(this.word.length);
