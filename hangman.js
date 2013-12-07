@@ -57,44 +57,40 @@
   };
 
   Hangman.RobotPlayer.prototype.doTurn = function (revealed) {
-    var alphabet = this.possibleGuesses;
-    var guess = alphabet[Math.floor(Math.random() * alphabet.length)];
     var counts = this.counts;
     var max = _.max(this.counts);
-
     var bestGuesses = _.filter(this.possibleGuesses, function(possibleGuesses) {
         return counts[possibleGuesses] === max;
       });
-
     var bestGuess = _.shuffle(bestGuesses)[0]; // not deterministic
-    if (this.possibleGuesses.indexOf(bestGuess) < 0) throw 'Guess errored out.';
+
+    if (this.possibleGuesses.indexOf(bestGuess) < 0) throw 'Error: you tried to guess something invalide.';
     return bestGuess;
   };
 
   Hangman.RobotPlayer.prototype.afterTurn = function (guess, matched, revealed) {
 
-    this.possibleGuesses = _.without(this.possibleGuesses, guess);
-
     if (matched) {
-      this.trimDownCorpus(revealed, guess);
-      this.recomputeCounts(); // runs the numbers on most frequent letters left in corpus
+      this.trimDownCorpusRevealed(revealed);
     } else {
       this.trimDownCorpusDenied(guess);
-      this.recomputeCounts(); 
     }
+
+    this.possibleGuesses = _.without(this.possibleGuesses, guess); // update corpus
+    this.recomputeCounts(); // runs the numbers on most frequent letters left in corpus
+
   };
 
-  Hangman.RobotPlayer.prototype.trimDownCorpus = function (revealed, guess) {
+  Hangman.RobotPlayer.prototype.trimDownCorpusRevealed = function (revealed) {
     var template = '^'+revealed.replace(/_/g, '.')+'$';
     var pattern = new RegExp(template, 'g');
-    var what_to_pull = '';
     this.corpus = _.filter(this.corpus, function (word) {
       return word.match(pattern);
     });
   }
 
   Hangman.RobotPlayer.prototype.trimDownCorpusDenied = function (guess) {
-    this.corpus = _.filter(this.corpus, function(word) {
+    this.corpus = _.filter(this.corpus, function (word) {
       return word.indexOf(guess) < 0;
     });
   }
@@ -120,7 +116,8 @@
   }
 
   // Pick the word
-  Hangman.App.prototype.reset = function (options) {
+  Hangman.App.prototype.reset = function () {
+    var word = document.location.search.slice(1) || this.pickSecretWord(); // Allows direct word entry into browser search after the ?
     this.word = this.pickSecretWord();
     //word = 'eat'; // todo: remove later
     this.secretWordController = new Hangman.SecretWordController(this.word);
